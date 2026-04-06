@@ -3,16 +3,38 @@
 import { useEffect, useState } from 'react';
 import { CategoryService } from '@/service/category.service';
 import type { Category } from '@/lib/interface/category.interface';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const handleDelete = async (categoryId: string) => {
+    const isConfirmed = window.confirm('Bạn có chắc muốn xóa danh mục này không?');
+    if (!isConfirmed) {
+      return;
+    }
+
+    const res = await CategoryService.getInstance().deleteCategory(categoryId);
+    if (res.success) {
+      toast.success(res.message || 'Xóa danh mục thành công');
+      setCategories((prev) => {
+        const nextCategories = prev.filter((category) => category._id !== categoryId);
+        const totalPages = Math.max(1, Math.ceil(nextCategories.length / itemsPerPage));
+        setCurrentPage((page) => Math.min(page, totalPages));
+        return nextCategories;
+      });
+    } else {
+      toast.error(res.message || 'Xóa danh mục thất bại');
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -50,10 +72,12 @@ export default function CategoriesPage() {
             Tổng cộng: {categories.length} danh mục
           </p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Thêm danh mục
-        </Button>
+        <Link href="/dashboard/categories/new">
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Thêm danh mục
+          </Button>
+        </Link>
       </div>
 
       {/* Derived state for pagination */}
@@ -119,12 +143,19 @@ export default function CategoriesPage() {
                             </td>
                             <td className="py-4 px-6">
                               <div className="flex items-center gap-2">
-                                <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
-                                  <Edit2 className="w-4 h-4" />
-                                </button>
-                                <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                                <Link href={`/dashboard/categories/${category._id}/edit`}>
+                                  <Button variant="outline" size="icon" className="h-9 w-9">
+                                    <Edit2 className="w-4 h-4" />
+                                  </Button>
+                                </Link>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  onClick={() => handleDelete(category._id)}
+                                >
                                   <Trash2 className="w-4 h-4" />
-                                </button>
+                                </Button>
                               </div>
                             </td>
                           </tr>
