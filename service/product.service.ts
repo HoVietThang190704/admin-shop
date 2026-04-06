@@ -17,7 +17,7 @@ export class ProductService {
     try {
       const url = new UrlBuilder().addPath(Endpoint.PRODUCTS);
       const response = await fetch(url.build(), {
-        next: { revalidate: 60 } // Next.js ISR/Cache options if needed
+        cache: 'no-store' // Always fetch fresh data on Admin Panel
       });
       if (!response.ok) {
          throw new Error(`HTTP error! status: ${response.status}`);
@@ -36,7 +36,9 @@ export class ProductService {
   async getProductById(id: string): Promise<BaseResponse<Product>> {
     try {
       const url = new UrlBuilder().addPath(Endpoint.PRODUCTS).addParam(id);
-      const response = await fetch(url.build());
+      const response = await fetch(url.build(), {
+        cache: 'no-store'
+      });
       if (!response.ok) {
          throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -54,7 +56,7 @@ export class ProductService {
     try {
       const url = new UrlBuilder().addPath(Endpoint.PRODUCTS).addParam("detail").addParam(slug);
       const response = await fetch(url.build(), {
-        next: { revalidate: 3600 } 
+        cache: 'no-store'
       });
       if (!response.ok) {
          throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,6 +66,45 @@ export class ProductService {
       console.error(`Error fetching product by slug ${slug}:`, error);
       return { 
         message: "Failed to fetch product by slug", 
+        success: false 
+      };
+    }
+  }
+
+  async createProduct(data: { 
+    title: string; 
+    price: number; 
+    description: string; 
+    images: string[]; 
+    category: string; 
+    stock?: number;
+  }): Promise<BaseResponse<any>> {
+    try {
+      const url = new UrlBuilder().addPath(Endpoint.PRODUCTS);
+      const response = await fetch(url.build(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+         return { 
+           success: false, 
+           message: result.message || `Lỗi từ máy chủ: ${response.status}`,
+           data: null 
+         };
+      }
+      
+      return result;
+    } catch (error) {
+      console.error("Error creating product:", error);
+      return { 
+        message: "Failed to create product", 
         success: false 
       };
     }

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -48,10 +49,12 @@ export default function ProductsPage() {
           <h1 className="text-4xl font-bold text-gray-900">Quản lý Sản phẩm</h1>
           <p className="text-gray-600 mt-2">Tổng cộng: {products.length} sản phẩm</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Thêm sản phẩm
-        </Button>
+        <Link href="/dashboard/products/new">
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Thêm sản phẩm
+          </Button>
+        </Link>
       </div>
 
       {/* Derived state for pagination */}
