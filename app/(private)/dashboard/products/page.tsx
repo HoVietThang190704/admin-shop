@@ -139,7 +139,7 @@ export default function ProductsPage() {
                   </div>
 
                   {/* Pagination Footer */}
-                  {totalPages > 1 && (
+                  {products.length > 0 && (
                     <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
                       <div className="text-sm text-gray-500">
                         Hiển thị {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, products.length)} trong số {products.length} sản phẩm
