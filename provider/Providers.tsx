@@ -29,6 +29,7 @@ export function Providers({
       attribute="class"
       defaultTheme="light"
       enableSystem={false}
+      forcedTheme="light"
     >
       <AuthProvider initialUser={initialUser}>
         <CartProvider>
