@@ -27,7 +27,7 @@ export function Providers({
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="dark"
+      defaultTheme="light"
       enableSystem={false}
     >
       <AuthProvider initialUser={initialUser}>
