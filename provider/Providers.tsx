@@ -14,7 +14,9 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
 }
 import { AuthProvider } from "./AuthProvider";
 import { CartProvider } from "./CartProvider";
+import { NotificationProvider } from "./NotificationProvider";
 import { User } from "@/lib/interface/user.interface";
+
 import { Toaster } from "@/components/ui/sonner";
 
 export function Providers({ 
@@ -33,9 +35,12 @@ export function Providers({
     >
       <AuthProvider initialUser={initialUser}>
         <CartProvider>
-          {children}
-          <Toaster position="top-center" richColors />
+          <NotificationProvider>
+            {children}
+            <Toaster position="top-center" richColors />
+          </NotificationProvider>
         </CartProvider>
+
       </AuthProvider>
     </NextThemesProvider>
   );
