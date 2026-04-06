@@ -1,0 +1,77 @@
+export const HOME_CONTENT = {
+  navbar: {
+    logo: "MEN'S",
+    links: [
+      { label: "Home", href: "/" },
+      { label: "Shop", href: "/shop" },
+      { label: "Clothing", href: "/clothing" },
+      { label: "Footwear", href: "/footwear" },
+      { label: "Accessories", href: "/accessories" },
+      { label: "Lookbook", href: "/lookbook" },
+      { label: "Sale", href: "/sale" },
+    ],
+  },
+  hero: {
+    title: "Define Your Style",
+    subtitle: "Modern Menswear for Every Occasion",
+    primaryCTA: "Shop Now",
+    secondaryCTA: "New Arrivals",
+    image: "/images/hero-menswear.png",
+  },
+  essentials: {
+    title: "ESSENTIALS",
+    categories: [
+      { id: 1, label: "Casual Wear", image: "/images/cat-casual.png" },
+      { id: 2, label: "Formal Wear", image: "/images/cat-formal.png" },
+      { id: 3, label: "Street Style", image: "/images/cat-street.png" },
+      { id: 4, label: "Outerwear", image: "/images/cat-outerwear.png" },
+      { id: 5, label: "Accessories", image: "/images/cat-accessories.png" },
+    ],
+  },
+  promo: {
+    title: "Autumn Collection - Up to 30% OFF",
+    cta: "SHOP COLLECTION",
+    image: "/images/promo-autumn.png",
+  },
+  trending: {
+    title: "TRENDING NOW",
+    products: [
+      {
+        id: "p1",
+        name: "Beige Bomber Jacket",
+        price: 149,
+        rating: 5,
+        image: "/images/prod-bomber.png",
+        isNew: false,
+        isSale: false,
+      },
+      {
+        id: "p2",
+        name: "Smart Casual Blazer",
+        price: 199,
+        rating: 5,
+        image: "/images/prod-blazer.png",
+        isNew: false,
+        isSale: false,
+      },
+      {
+        id: "p3",
+        name: "Knitted Polo Shirt",
+        price: 79,
+        rating: 5,
+        image: "/images/prod-polo.png",
+        isNew: false,
+        isSale: true,
+      },
+      {
+        id: "p4",
+        name: "Textured Wool Coat",
+        price: 229,
+        rating: 5,
+        image: "/images/prod-coat.png",
+        isNew: true,
+        isSale: false,
+      },
+    ],
+  },
+};
