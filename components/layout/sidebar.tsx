@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingCart, Folder, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Folder, LogOut, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AuthService } from '@/service/auth.service';
 
@@ -41,6 +41,11 @@ export function Sidebar() {
       href: '/dashboard/categories',
       label: 'Danh mục',
       icon: Folder,
+    },
+    {
+      href: '/dashboard/chat',
+      label: 'Tin nhắn',
+      icon: MessageSquare,
     },
   ];
 
