@@ -78,7 +78,14 @@ export default function Dashboard() {
     },
     {
       title: 'Doanh Thu',
-      value: `₫${orders.reduce((sum, order) => sum + order.totalAmount, 0).toLocaleString('vi-VN')}`,
+      value: `₫${orders
+        .filter(
+          (order) =>
+            order.orderStatus === 'confirmed' &&
+            order.paymentStatus === 'paid'
+        )
+        .reduce((sum, order) => sum + order.totalAmount, 0)
+        .toLocaleString('vi-VN')}`,
       icon: <ShoppingCart className="w-6 h-6" />,
       color: 'bg-orange-500',
     },

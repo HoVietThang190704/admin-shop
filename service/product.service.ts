@@ -109,4 +109,81 @@ export class ProductService {
       };
     }
   }
+
+  async updateProduct(
+    id: string,
+    data: {
+      title?: string;
+      price?: number;
+      description?: string;
+      images?: string[];
+      category?: string;
+    },
+  ): Promise<BaseResponse<any>> {
+    try {
+      const url = new UrlBuilder().addPath(Endpoint.PRODUCTS).addParam(id);
+      const response = await fetch(url.build(), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: result.message || `Lỗi từ máy chủ: ${response.status}`,
+          data: null,
+        };
+      }
+
+      return {
+        success: true,
+        message: result.message || 'Cập nhật sản phẩm thành công',
+        data: result.data || result,
+      };
+    } catch (error) {
+      console.error(`Error updating product ${id}:`, error);
+      return {
+        message: "Failed to update product",
+        success: false,
+      };
+    }
+  }
+
+  async deleteProduct(id: string): Promise<BaseResponse<any>> {
+    try {
+      const url = new UrlBuilder().addPath(Endpoint.PRODUCTS).addParam(id);
+      const response = await fetch(url.build(), {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: result.message || `Lỗi từ máy chủ: ${response.status}`,
+          data: null,
+        };
+      }
+
+      return {
+        success: true,
+        message: result.message || 'Xóa sản phẩm thành công',
+        data: result.data || result,
+      };
+    } catch (error) {
+      console.error(`Error deleting product ${id}:`, error);
+      return {
+        message: "Failed to delete product",
+        success: false,
+      };
+    }
+  }
 }

@@ -3,17 +3,38 @@
 import { useEffect, useState } from 'react';
 import { ProductService } from '@/service/product.service';
 import type { Product } from '@/lib/interface/product.interface';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const handleDelete = async (productId: string) => {
+    const isConfirmed = window.confirm('Bạn có chắc muốn xóa sản phẩm này không?');
+    if (!isConfirmed) {
+      return;
+    }
+
+    const res = await ProductService.getInstance().deleteProduct(productId);
+    if (res.success) {
+      toast.success(res.message || 'Xóa sản phẩm thành công');
+      setProducts((prev) => {
+        const nextProducts = prev.filter((product) => product._id !== productId);
+        const totalPages = Math.max(1, Math.ceil(nextProducts.length / itemsPerPage));
+        setCurrentPage((page) => Math.min(page, totalPages));
+        return nextProducts;
+      });
+    } else {
+      toast.error(res.message || 'Xóa sản phẩm thất bại');
+    }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -124,12 +145,19 @@ export default function ProductsPage() {
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
-                          <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                          <Link href={`/dashboard/products/${product._id}/edit`}>
+                            <Button variant="outline" size="icon" className="h-9 w-9">
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                          </Link>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDelete(product._id)}
+                          >
                             <Trash2 className="w-4 h-4" />
-                          </button>
+                          </Button>
                         </div>
                       </td>
                     </tr>

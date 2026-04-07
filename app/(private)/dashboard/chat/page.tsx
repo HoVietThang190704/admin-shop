@@ -70,8 +70,6 @@ export default function ChatPage() {
     if (!socket) return;
     
     const handler = (msg: Message) => {
-      const chatSvc = ChatService.getInstance();
-
       // If the message belongs to active chat, push it
       setMessages((prev) => {
         const isRelated = msg.from === activeUserId || msg.to === activeUserId;
@@ -80,16 +78,33 @@ export default function ChatPage() {
         return [...prev, msg];
       });
 
-      // Update sidebar
-      const refreshConvs = async () => {
-        const convs = await chatSvc.getConversations();
-        const augmented = await Promise.all(convs.map(async (c) => {
-           const details = await chatSvc.getUser(c.user);
-           return { ...c, userDetails: details };
-        }));
-        setConversations(augmented);
-      };
-      refreshConvs();
+      // Update sidebar - optimize by updating locally instead of refetching all
+      setConversations((prev) => {
+        const updatedConvs = [...prev];
+        const msgSender = msg.from;
+        const existingIdx = updatedConvs.findIndex(c => c.user === msgSender);
+        
+        if (existingIdx !== -1) {
+          // Update existing conversation
+          updatedConvs[existingIdx].message = msg;
+          // Move to top
+          const removed = updatedConvs.splice(existingIdx, 1);
+          return [...removed, ...updatedConvs];
+        } else {
+          // New conversation - fetch user details
+          const fetchNewUser = async () => {
+            const chatSvc = ChatService.getInstance();
+            const details = await chatSvc.getUser(msgSender);
+            setConversations(prev => {
+              const found = prev.find(c => c.user === msgSender);
+              if (found) return prev;
+              return [{ user: msgSender, message: msg, userDetails: details }, ...prev];
+            });
+          };
+          fetchNewUser();
+          return prev;
+        }
+      });
     };
 
     socket.on("receive_message", handler);
